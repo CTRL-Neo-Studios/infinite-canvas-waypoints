@@ -6,8 +6,8 @@ export interface ModuleOptions {
 
 export default defineNuxtModule<ModuleOptions>({
 	meta: {
-		name: 'my-module',
-		configKey: 'myModule',
+		name: '@type32/jsoncanvas-editor-nuxt',
+		configKey: 'jsonCanvasEditor',
 	},
 	// Default configuration options of the Nuxt module
 	defaults: {},
