@@ -1,2 +1,18 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+:root {
+	--ui-bg: hsl(0 0% 100%);
+	--ui-foreground: hsl(240 10% 3.9%);
+	--ui-muted: hsl(240 4.8% 95.9%);
+	--ui-border: hsl(240 5.9% 90%);
+	--ui-card: hsl(0 0% 100%);
+}
+
+.dark {
+	--ui-bg: hsl(240 10% 3.9%);
+	--ui-foreground: hsl(0 0% 98%);
+	--ui-muted: hsl(240 3.7% 15.9%);
+	--ui-border: hsl(240 3.7% 15.9%);
+	--ui-card: hsl(240 10% 3.9%);
+}

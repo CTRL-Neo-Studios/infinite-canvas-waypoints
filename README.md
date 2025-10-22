@@ -28,7 +28,37 @@ or
 bun add @type32/jsoncanvas-editor-nuxt
 ```
 
-That's it! You can now use SON Canvas Editor in your Nuxt app ✨
+That's it! You can now use JSON Canvas Editor in your Nuxt app ✨
+
+### Usage
+
+Add the module to your `nuxt.config.ts` and drop the `JsonCanvasEditor` anywhere:
+
+```vue
+<template>
+  <div class="h-dvh">
+    <JsonCanvasEditor v-model="canvas" />
+  </div>
+ </template>
+
+<script setup lang="ts">
+import type { JSONCanvas } from '@type32/jsoncanvas-editor-nuxt'
+const canvas = ref<JSONCanvas>({ nodes: [], edges: [], metadata: { version: '1.0', frontmatter: {} } })
+</script>
+```
+
+The editor supports:
+
+- Pan/zoom with mouse and trackpad
+- Add Text/File/Link/Group nodes
+- Drag to move, resize via handle (snap to grid)
+- Draw edges with arrowheads; delete with keyboard
+- Import/export JSON via your own controls (or via exposed methods)
+
+Inspiration and reference implementations for rendering-only solutions:
+
+- `vue-json-canvas` by wujieli0207 [`github.com/wujieli0207/vue-json-canvas`](https://github.com/wujieli0207/vue-json-canvas)
+- `JSON-Canvas-Viewer` by Hesprs [`github.com/Hesprs/JSON-Canvas-Viewer`](https://github.com/Hesprs/JSON-Canvas-Viewer)
 
 
 ## Contribution
