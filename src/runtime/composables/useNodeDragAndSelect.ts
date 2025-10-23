@@ -1,12 +1,15 @@
 import type { Ref } from 'vue'
-import type { JSONCanvas, JSONCanvasNode } from '../types/jsoncanvas'
+import type { JSONCanvas, Point } from '../types/jsoncanvas'
 
-type Point = { x: number; y: number }
+type Hierarchy = {
+  getDescendants: (nodeId: string) => Set<string>
+}
 
 export function useNodeDragAndSelect(
   canvas: Ref<JSONCanvas>,
   scale: Ref<number>,
   selectedNodeIds: Ref<Set<string>>,
+  hierarchy: Ref<Hierarchy>,
   updateCanvas: (newCanvas: JSONCanvas) => void,
 ) {
   let dragStartPositions: Map<string, Point> = new Map()
@@ -29,7 +32,13 @@ export function useNodeDragAndSelect(
     }
 
     dragStartPositions.clear()
+    const nodesToDrag = new Set(selectedNodeIds.value)
     for (const id of selectedNodeIds.value) {
+      const descendants = hierarchy.value.getDescendants(id)
+      descendants.forEach(descId => nodesToDrag.add(descId))
+    }
+    
+    for (const id of nodesToDrag) {
       const node = canvas.value.nodes?.find(n => n.id === id)
       if (node) {
         dragStartPositions.set(id, { x: node.x, y: node.y })

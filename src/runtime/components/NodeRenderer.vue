@@ -29,8 +29,7 @@ const nodeComponent = computed(() => {
 
 <template>
   <div
-    class="absolute select-none"
-    :class="{ 'ring-2': isSelected, 'transition duration-200 ring-0 ring-primary rounded-lg': true }"
+    :class="[props.isSelected ? 'ring-2 ring-offset-2 ring-offset-background border-primary shadow-lg' : 'ring-0 shadow-none', 'absolute border border-default select-none transition duration-100 ring-primary rounded-lg']"
     :style="{
       left: `${node.x}px`,
       top: `${node.y}px`,
@@ -38,6 +37,6 @@ const nodeComponent = computed(() => {
       height: `${node.height}px`,
     }"
   >
-    <component :is="nodeComponent" v-if="nodeComponent" :node="node" class="w-full h-full" />
+    <component :is="nodeComponent" v-if="nodeComponent" :node="node" :isSelected="isSelected" class="w-full h-full" />
   </div>
 </template>

@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
   <div
-    class="relative w-full h-full pointer-events-none"
+    class="relative w-full h-full"
     :style="{ 
       backgroundColor: node.background ? 'transparent' : node.color,
       backgroundImage: node.background ? `url(${node.background})` : 'none',
@@ -16,9 +16,12 @@ defineProps<{
       backgroundRepeat: node.backgroundStyle === 'repeat' ? 'repeat' : 'no-repeat',
     }"
   >
-    <div class="absolute top-0 left-0 w-full border-t-2 border-dashed border-gray-400 dark:border-gray-600" />
-    <div v-if="node.label" class="absolute -top-2 left-2 text-xs text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-900 px-1">
+    <div v-if="node.label" class="absolute top-1 left-1 z-20 text-xs px-1 bg-default rounded-lg border-r border-default">
       {{ node.label }}
     </div>
   </div>
 </template>
+
+<style scoped>
+@reference "../../styles/main.css";
+</style>

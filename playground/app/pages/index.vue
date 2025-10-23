@@ -38,7 +38,7 @@ const canvas = ref<JSONCanvas>({
       y: 300,
       width: 400,
       height: 200,
-      label: 'A Group'
+      label: 'A Group okokok'
     }
   ]
 })

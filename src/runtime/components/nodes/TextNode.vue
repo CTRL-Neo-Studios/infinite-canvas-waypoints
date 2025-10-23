@@ -2,14 +2,15 @@
 import type { JSONCanvasTextNode } from '../../types/jsoncanvas'
 
 defineProps<{
-  node: JSONCanvasTextNode
+  node: JSONCanvasTextNode,
+  isSelected: boolean
 }>()
 </script>
 
 <template>
-  <UCard>
+  <div>
     <div class="prose dark:prose-invert">
       {{ node.text }}
     </div>
-  </UCard>
+  </div>
 </template>

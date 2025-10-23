@@ -127,6 +127,13 @@ export function useJsonCanvasEditor(options: UseJsonCanvasEditorOptions = {}) {
     }
   }
 
+  function screenToWorld(x: number, y: number): Point {
+    return {
+      x: (x - translate.value.x) / scale.value,
+      y: (y - translate.value.y) / scale.value,
+    }
+  }
+
   return {
     // State
     scale,
@@ -140,5 +147,6 @@ export function useJsonCanvasEditor(options: UseJsonCanvasEditorOptions = {}) {
     onPointerMove,
     onPointerUp,
     onWheel,
+    screenToWorld,
   }
 }
