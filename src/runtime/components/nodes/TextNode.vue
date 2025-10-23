@@ -2,7 +2,7 @@
 import type { JSONCanvasTextNode } from '../../types/jsoncanvas'
 
 defineProps<{
-  node: JSONCanvasTextNode,
+  node: JSONCanvasTextNode
   isSelected: boolean
 }>()
 </script>

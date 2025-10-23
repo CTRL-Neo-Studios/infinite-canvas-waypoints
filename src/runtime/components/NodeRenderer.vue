@@ -37,6 +37,9 @@ const nodeComponent = computed(() => {
       height: `${node.height}px`,
     }"
   >
-    <component :is="nodeComponent" v-if="nodeComponent" :node="node" :isSelected="isSelected" class="w-full h-full" />
+    <TextNode v-if="node.type === 'text'" :node="node" :is-selected="isSelected" class="w-full h-full" />
+    <FileNode v-if="node.type === 'file'" :node="node" :is-selected="isSelected" class="w-full h-full" />
+    <LinkNode v-if="node.type === 'link'" :node="node" :is-selected="isSelected" class="w-full h-full" />
+    <GroupNode v-if="node.type === 'group'" :node="node" :is-selected="isSelected" class="w-full h-full" />
   </div>
 </template>

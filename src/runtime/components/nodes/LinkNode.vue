@@ -3,6 +3,7 @@ import type { JSONCanvasLinkNode } from '../../types/jsoncanvas'
 
 defineProps<{
   node: JSONCanvasLinkNode
+  isSelected: boolean
 }>()
 </script>
 

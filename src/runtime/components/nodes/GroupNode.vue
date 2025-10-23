@@ -3,6 +3,7 @@ import type { JSONCanvasGroupNode } from '../../types/jsoncanvas'
 
 defineProps<{
   node: JSONCanvasGroupNode
+  isSelected: boolean
 }>()
 </script>
 
@@ -16,12 +17,11 @@ defineProps<{
       backgroundRepeat: node.backgroundStyle === 'repeat' ? 'repeat' : 'no-repeat',
     }"
   >
-    <div v-if="node.label" class="absolute top-1 left-1 z-20 text-xs px-1 bg-default rounded-lg border-r border-default">
+    <div v-if="node.label" class="absolute top-0 left-0 w-fit pt-1 text-xs p-1 px-1.5 text-muted">
       {{ node.label }}
     </div>
   </div>
 </template>
 
 <style scoped>
-@reference "../../styles/main.css";
 </style>

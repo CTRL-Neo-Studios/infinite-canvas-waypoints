@@ -3,6 +3,7 @@ import type { JSONCanvasFileNode } from '../../types/jsoncanvas'
 
 defineProps<{
   node: JSONCanvasFileNode
+  isSelected: boolean
 }>()
 </script>
 
