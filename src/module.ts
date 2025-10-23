@@ -18,6 +18,8 @@ export default defineNuxtModule<ModuleOptions>({
 		// addPlugin(resolver.resolve('./runtime/plugin'))
 		_nuxt.options.css.unshift(resolver.resolve('./runtime/styles/main.css'))
 
+		_nuxt.options.alias["@type32/jsoncanvas-editor-nuxt"] = resolver.resolve("./runtime/editor/types/jsoncanvas.ts");
+
 		// Auto-import components and composables
 		addComponentsDir({
 			path: resolver.resolve('./runtime/components'),

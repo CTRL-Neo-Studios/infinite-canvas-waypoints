@@ -1,8 +1,20 @@
 <script setup lang="ts">
-import { shallowRef, computed, ref, watch } from 'vue'
-import { useInfiniteCanvas } from '../composables/useInfiniteCanvas'
+import { shallowRef, computed, ref, watch, toRef } from 'vue'
+import { useJsonCanvasEditor } from '../composables/useJsonCanvasEditor'
+import { useNodeDragAndSelect } from '../composables/useNodeDragAndSelect'
+import type { JSONCanvas } from '../types/jsoncanvas'
+import NodeRenderer from './NodeRenderer.vue'
+
+const props = defineProps<{
+  modelValue: JSONCanvas
+}>()
+
+const emit = defineEmits<{
+  'update:modelValue': [value: JSONCanvas]
+}>()
 
 const viewportRef = shallowRef<HTMLDivElement | null>(null)
+const selectedNodeIds = ref<Set<string>>(new Set())
 
 // -- Grid --
 const gridSpacing = ref(24) // world units
@@ -19,7 +31,39 @@ const {
   onPointerMove,
   onPointerUp,
   onWheel,
-} = useInfiniteCanvas({ minScale: 0.25, maxScale: 5 })
+  screenToWorld,
+} = useJsonCanvasEditor({ 
+  minScale: 0.25, 
+  maxScale: 5,
+  onSelection: (worldRect) => {
+    if (!worldRect) {
+      selectedNodeIds.value.clear()
+      selectedNodeIds.value = new Set(selectedNodeIds.value)
+      return
+    }
+    const newSelectedIds = new Set<string>()
+    props.modelValue.nodes?.forEach(node => {
+      // Simple AABB collision detection
+      if (
+        node.x < worldRect.x + worldRect.width &&
+        node.x + node.width > worldRect.x &&
+        node.y < worldRect.y + worldRect.height &&
+        node.y + node.height > worldRect.y
+      ) {
+        newSelectedIds.add(node.id)
+      }
+    })
+    selectedNodeIds.value = newSelectedIds
+  }
+})
+
+// -- Node Interaction --
+const { handleNodePointerDown } = useNodeDragAndSelect(
+  toRef(props, 'modelValue'),
+  scale,
+  selectedNodeIds,
+  (value: JSONCanvas) => emit('update:modelValue', value),
+)
 
 const cssVars = computed(() => {
   return {
@@ -76,6 +120,13 @@ watch(isPanning, (panning) => {
       }"
     >
       <!-- Nodes will be rendered here -->
+      <NodeRenderer 
+        v-for="node in modelValue.nodes" 
+        :key="node.id" 
+        :node="node"
+        :is-selected="selectedNodeIds.has(node.id)"
+        @pointerdown.stop="e => handleNodePointerDown(e, node.id)"
+      />
     </div>
 
     <!-- Selection rectangle -->

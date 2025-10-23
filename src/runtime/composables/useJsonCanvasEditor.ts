@@ -1,16 +1,15 @@
 import { ref, computed, type Ref } from 'vue'
 import { useMagicKeys } from '@vueuse/core'
+import type { Rect, Point } from '../types/jsoncanvas'
 
-type Point = { x: number; y: number }
-type Rect = { x: number; y: number; width: number; height: number }
-
-export interface UseInfiniteCanvasOptions {
+export interface UseJsonCanvasEditorOptions {
   minScale?: number
   maxScale?: number
+  onSelection?: (worldRect: Rect | null) => void
 }
 
-export function useInfiniteCanvas(options: UseInfiniteCanvasOptions = {}) {
-  const { minScale = 0.25, maxScale = 5 } = options
+export function useJsonCanvasEditor(options: UseJsonCanvasEditorOptions = {}) {
+  const { minScale = 0.25, maxScale = 5, onSelection } = options
 
   // -- State --
   const translate = ref<Point>({ x: 0, y: 0 })
@@ -85,12 +84,20 @@ export function useInfiniteCanvas(options: UseInfiniteCanvasOptions = {}) {
     // Finalize selection
     if (isSelecting.value) {
       isSelecting.value = false
-      // Here you would emit the final selection event if needed
-      // For now, we just clear the visual
-      setTimeout(() => {
-        selectionStart.value = null
-        selectionRect.value = null
-      }, 100) // Keep rect for a moment for click detection
+      if (selectionRect.value && selectionRect.value.width > 5 && selectionRect.value.height > 5) {
+        const worldRect = {
+          x: (selectionRect.value.x - translate.value.x) / scale.value,
+          y: (selectionRect.value.y - translate.value.y) / scale.value,
+          width: selectionRect.value.width / scale.value,
+          height: selectionRect.value.height / scale.value,
+        }
+        onSelection?.(worldRect)
+      } else {
+        onSelection?.(null)
+      }
+      
+      selectionStart.value = null
+      selectionRect.value = null
     }
   }
 

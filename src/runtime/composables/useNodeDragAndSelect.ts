@@ -1,0 +1,78 @@
+import type { Ref } from 'vue'
+import type { JSONCanvas, JSONCanvasNode } from '../types/jsoncanvas'
+
+type Point = { x: number; y: number }
+
+export function useNodeDragAndSelect(
+  canvas: Ref<JSONCanvas>,
+  scale: Ref<number>,
+  selectedNodeIds: Ref<Set<string>>,
+  updateCanvas: (newCanvas: JSONCanvas) => void,
+) {
+  let dragStartPositions: Map<string, Point> = new Map()
+  let dragStartPointer: Point | null = null
+
+  function handleNodePointerDown(event: PointerEvent, nodeId: string) {
+    if (event.button !== 0) return
+
+    const isSelected = selectedNodeIds.value.has(nodeId)
+    const isMetaKey = event.ctrlKey || event.metaKey || event.shiftKey
+
+    if (!isSelected && !isMetaKey) {
+      selectedNodeIds.value = new Set([nodeId])
+    } else if (isMetaKey && isSelected) {
+      selectedNodeIds.value.delete(nodeId)
+      selectedNodeIds.value = new Set(selectedNodeIds.value) // force reactivity
+    } else if (isMetaKey && !isSelected) {
+      selectedNodeIds.value.add(nodeId)
+      selectedNodeIds.value = new Set(selectedNodeIds.value) // force reactivity
+    }
+
+    dragStartPositions.clear()
+    for (const id of selectedNodeIds.value) {
+      const node = canvas.value.nodes?.find(n => n.id === id)
+      if (node) {
+        dragStartPositions.set(id, { x: node.x, y: node.y })
+      }
+    }
+
+    dragStartPointer = { x: event.clientX, y: event.clientY }
+
+    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointerup', handlePointerUp)
+  }
+
+  function handlePointerMove(event: PointerEvent) {
+    if (!dragStartPointer) return
+
+    const dx = (event.clientX - dragStartPointer.x) / scale.value
+    const dy = (event.clientY - dragStartPointer.y) / scale.value
+
+    const newNodes = canvas.value.nodes?.map((node) => {
+      const startPos = dragStartPositions.get(node.id)
+      if (startPos) {
+        return {
+          ...node,
+          x: Math.round(startPos.x + dx),
+          y: Math.round(startPos.y + dy),
+        }
+      }
+      return node
+    })
+
+    if (newNodes) {
+      updateCanvas({ ...canvas.value, nodes: newNodes })
+    }
+  }
+
+  function handlePointerUp() {
+    dragStartPointer = null
+    dragStartPositions.clear()
+    window.removeEventListener('pointermove', handlePointerMove)
+    window.removeEventListener('pointerup', handlePointerUp)
+  }
+
+  return {
+    handleNodePointerDown,
+  }
+}
