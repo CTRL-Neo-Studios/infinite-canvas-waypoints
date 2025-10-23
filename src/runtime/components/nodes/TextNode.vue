@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <div>
+  <div class="bg-default rounded-lg p-2 shadow-lg">
     <div class="prose dark:prose-invert">
       {{ node.text }}
     </div>

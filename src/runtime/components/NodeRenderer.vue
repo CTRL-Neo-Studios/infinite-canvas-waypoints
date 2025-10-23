@@ -10,21 +10,6 @@ const props = defineProps<{
   node: JSONCanvasNode
   isSelected: boolean
 }>()
-
-const nodeComponent = computed(() => {
-  switch (props.node.type) {
-    case 'text':
-      return TextNode
-    case 'file':
-      return FileNode
-    case 'link':
-      return LinkNode
-    case 'group':
-      return GroupNode
-    default:
-      return null
-  }
-})
 </script>
 
 <template>
