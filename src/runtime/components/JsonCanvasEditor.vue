@@ -125,7 +125,7 @@ watch(isPanning, (panning) => {
 <template>
   <div
     ref="viewportRef"
-    class="relative w-full h-dvh overflow-hidden select-none"
+    class="relative w-full h-dvh overflow-hidden select-none font-canvas"
     :style="cssVars as any"
     @pointerdown="onPointerDown"
     @pointermove="onPointerMove"

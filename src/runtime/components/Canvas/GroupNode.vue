@@ -9,7 +9,7 @@ defineProps<{
 
 <template>
   <div
-    class="relative w-full h-full"
+    class="relative w-full h-full shadow-lg border border-default rounded-md"
     :style="{ 
       backgroundColor: node.background ? 'transparent' : node.color,
       backgroundImage: node.background ? `url(${node.background})` : 'none',

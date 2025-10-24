@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { JSONCanvas } from '../../../src/runtime/types/jsoncanvas'
+import type { JSONCanvas } from '@type32/jsoncanvas-editor-nuxt'
 
 const canvas = ref<JSONCanvas>({
   nodes: [
