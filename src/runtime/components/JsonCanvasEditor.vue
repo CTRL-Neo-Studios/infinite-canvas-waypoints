@@ -3,6 +3,7 @@ import { shallowRef, computed, ref, watch, toRef } from 'vue'
 import { useJsonCanvasEditor } from '../composables/useJsonCanvasEditor'
 import { useNodeDragAndSelect } from '../composables/useNodeDragAndSelect'
 import { useNodeHierarchy } from '../composables/useNodeHierarchy'
+import { useNodeResize } from '../composables/useNodeResize'
 import type { JSONCanvas } from '../types/jsoncanvas'
 import NodeRenderer from './NodeRenderer.vue'
 
@@ -71,6 +72,25 @@ const { handleNodePointerDown } = useNodeDragAndSelect(
   (value: JSONCanvas) => emit('update:modelValue', value),
 )
 
+const { startResize, getHandleForMouseEvent } = useNodeResize(
+  toRef(props, 'modelValue'),
+  scale,
+  (value: JSONCanvas) => emit('update:modelValue', value),
+)
+
+function handleNodeInteractionStart(event: PointerEvent, nodeId: string) {
+  const node = props.modelValue.nodes?.find(n => n.id === nodeId)
+  if (!node) return
+  
+  const handle = getHandleForMouseEvent(event, node)
+
+  if (handle) {
+    startResize(event, nodeId, handle)
+  } else {
+    handleNodePointerDown(event, nodeId)
+  }
+}
+
 const sortedNodes = computed(() => {
   if (!props.modelValue.nodes) return []
   return [...props.modelValue.nodes].sort((a, b) => {
@@ -138,7 +158,10 @@ watch(isPanning, (panning) => {
         :key="node.id" 
         :node="node"
         :is-selected="selectedNodeIds.has(node.id)"
-        @pointerdown.stop="(e: PointerEvent) => handleNodePointerDown(e, node.id)"
+        @interaction-start="(e: PointerEvent) => {
+          e.stopPropagation() // Prevent canvas pan/select
+          handleNodeInteractionStart(e, node.id)
+        }"
       />
     </div>
 

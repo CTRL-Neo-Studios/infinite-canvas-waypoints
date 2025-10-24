@@ -16,7 +16,7 @@ export default defineNuxtModule<ModuleOptions>({
 		const resolver = createResolver(import.meta.url)
 
 		// addPlugin(resolver.resolve('./runtime/plugin'))
-		_nuxt.options.css.unshift(resolver.resolve('./runtime/styles/main.css'))
+		_nuxt.options.css.push(resolver.resolve('./runtime/styles/main.css'))
 
 		_nuxt.options.alias["@type32/jsoncanvas-editor-nuxt"] = resolver.resolve("./runtime/editor/types/jsoncanvas.ts");
 

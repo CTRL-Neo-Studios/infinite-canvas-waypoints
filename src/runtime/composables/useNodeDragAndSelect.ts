@@ -1,4 +1,4 @@
-import type { Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import type { JSONCanvas, Point } from '../types/jsoncanvas'
 
 type Hierarchy = {
@@ -14,6 +14,8 @@ export function useNodeDragAndSelect(
 ) {
   let dragStartPositions: Map<string, Point> = new Map()
   let dragStartPointer: Point | null = null
+  let isDragging = false
+  let frameId: number | null = null
 
   function handleNodePointerDown(event: PointerEvent, nodeId: string) {
     if (event.button !== 0) return
@@ -46,39 +48,47 @@ export function useNodeDragAndSelect(
     }
 
     dragStartPointer = { x: event.clientX, y: event.clientY }
+    isDragging = true
 
-    window.addEventListener('pointermove', handlePointerMove)
-    window.addEventListener('pointerup', handlePointerUp)
+    window.addEventListener('pointermove', onDrag)
+    window.addEventListener('pointerup', endDrag)
   }
 
-  function handlePointerMove(event: PointerEvent) {
-    if (!dragStartPointer) return
+  const onDrag = (event: PointerEvent) => {
+    if (!isDragging) return
+    if (frameId) cancelAnimationFrame(frameId)
+    
+    frameId = requestAnimationFrame(() => {
+      if (!dragStartPointer) return
 
-    const dx = (event.clientX - dragStartPointer.x) / scale.value
-    const dy = (event.clientY - dragStartPointer.y) / scale.value
+      const dx = (event.clientX - dragStartPointer.x) / scale.value
+      const dy = (event.clientY - dragStartPointer.y) / scale.value
 
-    const newNodes = canvas.value.nodes?.map((node) => {
-      const startPos = dragStartPositions.get(node.id)
-      if (startPos) {
-        return {
-          ...node,
-          x: Math.round(startPos.x + dx),
-          y: Math.round(startPos.y + dy),
+      const newNodes = canvas.value.nodes?.map((node) => {
+        const startPos = dragStartPositions.get(node.id)
+        if (startPos) {
+          return {
+            ...node,
+            x: Math.round(startPos.x + dx),
+            y: Math.round(startPos.y + dy),
+          }
         }
-      }
-      return node
-    })
+        return node
+      })
 
-    if (newNodes) {
-      updateCanvas({ ...canvas.value, nodes: newNodes })
-    }
+      if (newNodes) {
+        updateCanvas({ ...canvas.value, nodes: newNodes })
+      }
+    })
   }
 
-  function handlePointerUp() {
+  function endDrag() {
+    if (frameId) cancelAnimationFrame(frameId)
+    isDragging = false
     dragStartPointer = null
     dragStartPositions.clear()
-    window.removeEventListener('pointermove', handlePointerMove)
-    window.removeEventListener('pointerup', handlePointerUp)
+    window.removeEventListener('pointermove', onDrag)
+    window.removeEventListener('pointerup', endDrag)
   }
 
   return {
