@@ -7,9 +7,12 @@ import { useNodeResize } from '../composables/useNodeResize'
 import type { JSONCanvas } from '../types/jsoncanvas'
 import NodeRenderer from './NodeRenderer.vue'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   modelValue: JSONCanvas
-}>()
+  snapToGrid?: boolean
+}>(), {
+  snapToGrid: false,
+})
 
 const emit = defineEmits<{
   'update:modelValue': [value: JSONCanvas]
@@ -69,12 +72,16 @@ const { handleNodePointerDown } = useNodeDragAndSelect(
   scale,
   selectedNodeIds,
   nodeHierarchy,
+  toRef(props, 'snapToGrid'),
+  gridSpacing,
   (value: JSONCanvas) => emit('update:modelValue', value),
 )
 
 const { startResize, getHandleForMouseEvent } = useNodeResize(
   toRef(props, 'modelValue'),
   scale,
+  toRef(props, 'snapToGrid'),
+  gridSpacing,
   (value: JSONCanvas) => emit('update:modelValue', value),
 )
 

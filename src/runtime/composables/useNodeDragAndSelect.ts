@@ -10,12 +10,15 @@ export function useNodeDragAndSelect(
   scale: Ref<number>,
   selectedNodeIds: Ref<Set<string>>,
   hierarchy: Ref<Hierarchy>,
+  snapToGrid: Ref<boolean>,
+  gridSpacing: Ref<number>,
   updateCanvas: (newCanvas: JSONCanvas) => void,
 ) {
   let dragStartPositions: Map<string, Point> = new Map()
   let dragStartPointer: Point | null = null
   let isDragging = false
   let frameId: number | null = null
+  let primaryNodeId: string | null = null
 
   function handleNodePointerDown(event: PointerEvent, nodeId: string) {
     if (event.button !== 0) return
@@ -49,6 +52,7 @@ export function useNodeDragAndSelect(
 
     dragStartPointer = { x: event.clientX, y: event.clientY }
     isDragging = true
+    primaryNodeId = nodeId
 
     window.addEventListener('pointermove', onDrag)
     window.addEventListener('pointerup', endDrag)
@@ -59,18 +63,33 @@ export function useNodeDragAndSelect(
     if (frameId) cancelAnimationFrame(frameId)
     
     frameId = requestAnimationFrame(() => {
-      if (!dragStartPointer) return
+      if (!dragStartPointer || !primaryNodeId) return
 
       const dx = (event.clientX - dragStartPointer.x) / scale.value
       const dy = (event.clientY - dragStartPointer.y) / scale.value
+
+      let finalDx = dx
+      let finalDy = dy
+
+      if (snapToGrid.value) {
+        const primaryNodeStart = dragStartPositions.get(primaryNodeId)
+        if (primaryNodeStart) {
+          const newX = primaryNodeStart.x + dx
+          const newY = primaryNodeStart.y + dy
+          const snappedX = Math.round(newX / gridSpacing.value) * gridSpacing.value
+          const snappedY = Math.round(newY / gridSpacing.value) * gridSpacing.value
+          finalDx = dx + (snappedX - newX)
+          finalDy = dy + (snappedY - newY)
+        }
+      }
 
       const newNodes = canvas.value.nodes?.map((node) => {
         const startPos = dragStartPositions.get(node.id)
         if (startPos) {
           return {
             ...node,
-            x: Math.round(startPos.x + dx),
-            y: Math.round(startPos.y + dy),
+            x: Math.round(startPos.x + finalDx),
+            y: Math.round(startPos.y + finalDy),
           }
         }
         return node
@@ -85,6 +104,7 @@ export function useNodeDragAndSelect(
   function endDrag() {
     if (frameId) cancelAnimationFrame(frameId)
     isDragging = false
+    primaryNodeId = null
     dragStartPointer = null
     dragStartPositions.clear()
     window.removeEventListener('pointermove', onDrag)

@@ -9,6 +9,8 @@ const HANDLE_THRESHOLD = 8 // in screen pixels
 export function useNodeResize(
   canvas: Ref<JSONCanvas>,
   scale: Ref<number>,
+  snapToGrid: Ref<boolean>,
+  gridSpacing: Ref<number>,
   updateCanvas: (newCanvas: JSONCanvas) => void,
 ) {
   let activeNode: JSONCanvasNode | null = null
@@ -87,6 +89,29 @@ export function useNodeResize(
       }
       if (activeHandle.includes('bottom')) {
         newHeight = startRect.height + dy
+      }
+
+      if (snapToGrid.value) {
+        if (activeHandle.includes('left')) {
+          const snappedX = Math.round(newX / gridSpacing.value) * gridSpacing.value
+          newWidth += newX - snappedX
+          newX = snappedX
+        }
+        if (activeHandle.includes('right')) {
+          const right = newX + newWidth
+          const snappedRight = Math.round(right / gridSpacing.value) * gridSpacing.value
+          newWidth = snappedRight - newX
+        }
+        if (activeHandle.includes('top')) {
+          const snappedY = Math.round(newY / gridSpacing.value) * gridSpacing.value
+          newHeight += newY - snappedY
+          newY = snappedY
+        }
+        if (activeHandle.includes('bottom')) {
+          const bottom = newY + newHeight
+          const snappedBottom = Math.round(bottom / gridSpacing.value) * gridSpacing.value
+          newHeight = snappedBottom - newY
+        }
       }
       
       // Prevent negative dimensions and snap to grid
