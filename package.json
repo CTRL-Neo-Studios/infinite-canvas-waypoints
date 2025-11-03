@@ -1,6 +1,6 @@
 {
   "name": "@type32/jsoncanvas-editor-nuxt",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A component that allows you to input and edit a JSON Canvas.",
   "repository": "https://github.com/Type-32/jsoncanvas-editor-nuxt",
   "license": "MIT",
