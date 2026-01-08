@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { JSONCanvas } from '@type32/jsoncanvas-editor-nuxt'
+import type { JSONCanvas } from '@type32/infinite-canvas-waypoints'
 
 const canvas = ref<JSONCanvas>({
   nodes: [
@@ -47,7 +47,7 @@ const canvas = ref<JSONCanvas>({
   <div class="h-dvh">
     <JsonCanvasEditor v-model="canvas" />
   </div>
-  
+
 </template>
 
 <style scoped>

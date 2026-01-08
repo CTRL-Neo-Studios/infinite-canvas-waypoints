@@ -3,7 +3,7 @@ Get your module up and running quickly.
 
 Find and replace all on all files (CMD+SHIFT+F):
 - Name: JSON Canvas Editor for Nuxt
-- Package name: @type32/jsoncanvas-editor-nuxt
+- Package name: @type32/infinite-canvas-waypoints
 - Description: A component that allows you to input and edit a JSON Canvas.
 -->
 
@@ -21,11 +21,11 @@ A component that allows you to input and edit a JSON Canvas.
 Install the module to your Nuxt application with one command:
 
 ```bash
-bunx nuxi module add @type32/jsoncanvas-editor-nuxt
+bunx nuxi module add @type32/infinite-canvas-waypoints
 ```
 or
 ```bash
-bun add @type32/jsoncanvas-editor-nuxt
+bun add @type32/infinite-canvas-waypoints
 ```
 
 That's it! You can now use JSON Canvas Editor in your Nuxt app ✨
@@ -42,7 +42,7 @@ Add the module to your `nuxt.config.ts` and drop the `JsonCanvasEditor` anywhere
  </template>
 
 <script setup lang="ts">
-import type { JSONCanvas } from '@type32/jsoncanvas-editor-nuxt'
+import type { JSONCanvas } from '@type32/infinite-canvas-waypoints'
 const canvas = ref<JSONCanvas>({ nodes: [], edges: [], metadata: { version: '1.0', frontmatter: {} } })
 </script>
 ```
